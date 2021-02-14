@@ -4,7 +4,7 @@ services:
     image: postgres:13-alpine
     user: postgres
     volumes:
-      - ~/docker/railstest/db:/var/lib/postgresql/data
+      - ~/docker/railstest/db:/var/lib/postgresql/data:delegated
     environment:
       POSTGRES_USER: railstest
       POSTGRES_PASSWORD: railstest
@@ -15,8 +15,8 @@ services:
       - RAILS_DB_USER=railstest
       - RAILS_DB_PASSWORD=railstest
     volumes:
-      - ~/docker/railstest/web/log:/app/log
-      - ~/docker/railstest/web/tmp:/app/tmp
+      - .:/app:cached
+    working_dir: /app
     ports:
       - "3000:3000"
     depends_on:

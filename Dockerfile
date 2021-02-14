@@ -1,13 +1,13 @@
 # Based on ideas from https://medium.com/@lemuelbarango/ruby-on-rails-smaller-docker-images-bff240931332
+# and other sources
 #
-# This is for playing around in development mode, production images can be shrinked down some more
+# This is for playing around in development mode
+
+# stage 1: build gems
 
 FROM ruby:2.6.6-alpine AS build-base
 
 ARG APP_DIR=/app
-
-# store gems in app dir, so second stage can copy them easily
-ENV GEM_HOME="$APP_DIR/.bundle"
 
 RUN apk update && \
     apk upgrade && \
@@ -19,24 +19,23 @@ WORKDIR $APP_DIR
 
 COPY Gemfile Gemfile.lock package.json yarn.lock ./
 
-RUN mkdir $GEM_HOME && \
-    gem install bundler && \
+RUN gem install bundler && \
     bundle install && \
     yarn install
 
-COPY . .
+# COPY . .
 
-# Build stage done, start runtime stage
+# stage 2: development environment
 
 FROM ruby:2.6.6-alpine
 
 ARG APP_DIR=/app
+
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
-ENV GEM_HOME="$APP_DIR/.bundle"
 
 RUN apk update && \
     apk upgrade && \
@@ -46,7 +45,10 @@ RUN apk update && \
 
 WORKDIR $APP_DIR
 
-COPY --from=build-base $APP_DIR $APP_DIR
+COPY --from=build-base $GEM_HOME $GEM_HOME
+
+# add dir will be volume-mounted via docker compose
+#COPY --from=build-base $APP_DIR $APP_DIR
 
 RUN addgroup --gid $GROUP_ID rails && \
     adduser -D -g 'Rails pseudouser' -u $USER_ID -G rails rails && \
