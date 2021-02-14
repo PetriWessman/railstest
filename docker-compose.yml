@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - ~/docker/railstest/db/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: railstest
+      POSTGRES_PASSWORD: railstest
+  web:
+    build: .
+    environment:
+      - RAILS_DB_HOST=db
+      - RAILS_DB_USER=railstest
+      - RAILS_DB_PASSWORD=railstest
+    volumes:
+      - ~/docker/railstest/web/log:/app/log
+      - ~/docker/railstest/web/tmp:/app/tmp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
