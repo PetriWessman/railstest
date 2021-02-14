@@ -18,5 +18,11 @@ module Railstest
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # stop logger complaints when running in Docker
+    config.web_console.permissions = Socket.ip_address_list.select(&:ipv4?).map do |addrinfo|
+      IPAddr.new(addrinfo.ip_address).mask(24)
+    end
+    
   end
 end

@@ -52,9 +52,9 @@ RUN addgroup --gid $GROUP_ID rails && \
     adduser -D -g 'Rails pseudouser' -u $USER_ID -G rails rails && \
     chown -R rails:rails $APP_DIR
 
-# Add a script to be executed every time the container starts.
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
+# Add a script to be executed every time the container starts, plus other helpers
+COPY scripts/*.sh /usr/bin/
+RUN chmod +x /usr/bin/*.sh
 ENTRYPOINT ["entrypoint.sh"]
 
 USER $USER_ID
