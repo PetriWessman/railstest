@@ -14,7 +14,7 @@ clean:
 
 # remove non-referenced images
 imageclean:
-	docker image purge -f
+	docker image prune -f
 
 # Rails console in web container
 console:
