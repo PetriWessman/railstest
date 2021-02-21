@@ -5,7 +5,7 @@
 
 # stage 1: build gems
 
-FROM ruby:2.6.6-alpine AS build-base
+FROM ruby:2.7.2-alpine AS build-base
 
 ARG APP_DIR=/app
 
@@ -25,7 +25,7 @@ RUN gem install bundler && \
 
 # stage 2: development environment
 
-FROM ruby:2.6.6-alpine
+FROM ruby:2.7.2-alpine
 
 ARG APP_DIR=/app
 
